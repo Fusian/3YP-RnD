@@ -6,12 +6,18 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
+import edu.uci.ics.jung.graph.Graph;
+import edu.uci.ics.jung.graph.SparseMultigraph;
+import edu.uci.ics.jung.graph.util.EdgeType;
+import edu.uci.ics.jung.graph.util.Pair;
+
 
 public class StanfordParser {
 
 	private String filePath;
 	private String fileComments = "" ;
-	private ArrayList<String[]> nodes = new ArrayList<String[]>();
+	private ArrayList<long[]> edges = new ArrayList<long[]>();
+	private Graph<Long, Long> graphRep = new SparseMultigraph<Long, Long>();
 	
 	
 	StanfordParser(String filePath)
@@ -28,6 +34,8 @@ public class StanfordParser {
 			DataInputStream in = new DataInputStream(fstream);
 			BufferedReader br = new BufferedReader(new InputStreamReader(in));
 			String strLine;
+			String tempArr[];
+			long insertArr[] = new long[2];
 			
 			while ((strLine = br.readLine()) != null)   {
 				if(strLine.startsWith("#") == true )
@@ -36,7 +44,12 @@ public class StanfordParser {
 				}
 				else
 				{
-					nodes.add(strLine.split("[0-9]+ \\t [0-9]+"));
+					tempArr = strLine.split("\t");
+					for(int i = 0; i < insertArr.length; i++)
+					{
+						insertArr[i] = Long.parseLong(tempArr[i]);
+					}
+					edges.add(insertArr);
 				}
 			}
 			in.close();
@@ -52,13 +65,37 @@ public class StanfordParser {
 		return error;
 	}
 	
-	public ArrayList<String[]> getNodes()
+	public ArrayList<long[]> getDataSet()
 	{
-		return nodes;
+		return edges;
 	}
 	
 	public String getComments() 
 	{
 		return fileComments;
+	}
+	
+	public Graph<Long, Long> toGraph()
+	{
+		//Add vertices to graph first
+		for(long[] arr : edges)
+		{
+			graphRep.addVertex(arr[0]);
+		}
+		
+		//Add edges to graph
+		Long edgeName = (long) 0;
+		EdgeType edgeType = EdgeType.DIRECTED;
+		Pair<Long> vPair;
+		
+		for(long[] arr: edges)
+		{
+			vPair = new Pair<Long>(arr[0], arr[1]);
+			edgeName++;
+			graphRep.addEdge(edgeName, vPair, edgeType);
+			
+		}
+		
+		return graphRep;
 	}
 }
