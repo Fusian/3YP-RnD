@@ -10,7 +10,7 @@ import java.util.ArrayList;
 public class StanfordParser {
 
 	private String filePath;
-	private String fileComments;
+	private String fileComments = "" ;
 	private ArrayList<String[]> nodes = new ArrayList<String[]>();
 	
 	
@@ -30,7 +30,14 @@ public class StanfordParser {
 			String strLine;
 			
 			while ((strLine = br.readLine()) != null)   {
-				nodes.add(strLine.split("[0-9]+	[0-9]+"));
+				if(strLine.startsWith("#") == true )
+				{
+					fileComments += strLine + "\n";
+				}
+				else
+				{
+					nodes.add(strLine.split("[0-9]+ \\t [0-9]+"));
+				}
 			}
 			in.close();
 		}
@@ -48,5 +55,10 @@ public class StanfordParser {
 	public ArrayList<String[]> getNodes()
 	{
 		return nodes;
+	}
+	
+	public String getComments() 
+	{
+		return fileComments;
 	}
 }
