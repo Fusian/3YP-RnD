@@ -37,6 +37,7 @@ public class StanfordParser {
 			String tempArr[];
 			long insertArr[] = new long[2];
 			
+			//Code from http://www.roseindia.net/java/beginners/java-write-to-file.shtml
 			while ((strLine = br.readLine()) != null)   {
 				if(strLine.startsWith("#") == true )
 				{
